@@ -1,6 +1,10 @@
 ## Google Helpers
 
-...
+
+## Examples, availables in the Demo bundle of Polyfony
+
+![Usage examples](/doc/examples.jpg?raw=true)
+
 
 #### Google\Position
 
