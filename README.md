@@ -3,7 +3,7 @@
 
 ## Examples, availables in the Demo bundle of Polyfony
 
-![Usage examples](/doc/examples.jpg?raw=true)
+![Usage examples](https://github.com/sib-retail/polyfony-google/blob/master/doc/examples.png)
 
 
 #### Google\Position
