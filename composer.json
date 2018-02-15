@@ -1,5 +1,5 @@
 {
-    "name": "sib-retail/polyfony-google",
+    "name": "polyfony-inc/google",
     "description": "Helper to use Google's StreetView, Maps, Distance... APIs",
     "keywords": ["Google", "API", "Streetview", "Maps", "Distance", "Geocoder"],
     "type": "library",
@@ -11,7 +11,7 @@
     ],
     "require":{
         "php":">=7.1.0",
-        "sib-retail/polyfony": "*"
+        "polyfony-inc/polyfony": "*"
     },
     "autoload": {
         "psr-4": {
