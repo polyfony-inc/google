@@ -109,6 +109,8 @@ class Map {
 			// append it
 			$url .= urlencode($key) . '=' . urlencode($value) . '&';
 		}
+		// remove trailing &
+		$url = trim($url,'&');
 		// if markers
 		if($this->markers) {
 			foreach($this->markers as $aMarker){
