@@ -22,51 +22,69 @@ class Photo {
 	private $options;
 
 	// constructor
-	public function __construct($size = 600, $fov = 90, $pitch = 10) {
+	public function __construct(
+		int $size 	= 600, 
+		int $fov 	= 90, 
+		int $pitch 	= 10
+	) {
 		$this->url = self::$_api_url;
-		$this->options = array(
+		$this->options = [
 			'size'	=>$size . 'x' . $size,
 			'fov'	=>$fov,
 			'pitch'	=>$pitch
-		);
+		];
 	}
 
 	// set an option
-	public function option($key, $value) {
-		// assign
-		$this->options[$key] = $value;
+	public function option($key, $value=null) :self {
+		// if we are given an array of option
+		if(is_array($key)) {
+			// for each option
+			foreach($key as $index => $value) {
+				// set it individually
+				$this->option($index, $value);
+			}
+		}
+		else {
+			// assign
+			$this->options[$key] = $value;
+		}
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set the desired size
-	public function size($width, $height) {
+	public function size($width, $height) :self {
 		// assign
 		$this->options['size'] = $width . 'x' . $height;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set the position
-	public function position($latitude, $longitude) {
+	public function position($latitude, $longitude) :self {
 		// assign
 		$this->options['location'] = $latitude . ',' . $longitude;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set the street view photo given the address
-	public function address($address, $zip_code=null ,$city=null) {
+	public function address(
+		string $address, 
+		$zip_code = null ,
+		$city = null
+	) :self {
 		// assemble the address portions if any
 		$address = trim($address . ' ' . $zip_code . ' ' .$city);
 		// if a position is found
 		$this->options['location'] = $address;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// get the url of the photo
-	public function url() {
+	public function url() :string {
 		// prepare the url
 		$url = $this->url . '?';
 		// for each option
@@ -75,7 +93,13 @@ class Photo {
 			$url .= urlencode($key) . '=' . urlencode($value) . '&';
 		}
 		// return the url
-		return(trim($url,'&'));
+		return trim($url,'&');
+	}
+
+	// magic conversion
+	public function __toString() {
+		// return the generated url
+		return $this->url();
 	}
 
 }

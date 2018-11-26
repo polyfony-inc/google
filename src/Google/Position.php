@@ -10,6 +10,8 @@
  */
 
 namespace Google;
+use \Polyfony\Logger as Logger;
+use \Polyfony\Exception as Exception;
 
 class Position {
 	
@@ -18,22 +20,19 @@ class Position {
 
 	// return a GPS position given an address
 	public static function address(
-		string $address, 
-		?array $options = []
+		string 	$address, 
+		?array 	$options = []
 	) :?array {
 		// new http request
 		$request = new \Polyfony\HttpRequest();
 		// configure the request
 		$request->url(self::$_api_url)->data('address', $address);
-		// for each options
-		foreach($options as $key => $value) {
-			// add it to the request
-			$request->data($key, $value);
-		}
+		// add it to the request
+		$request->data($options);
 		// execture the actual request
-		$success = $request->get();
+		$successful_request = $request->get();
 		// if the request succeeded
-		if($success) {
+		if($successful_request) {
 			// get the response
 			$response = $request->getBody();
 			// check if the api found results
@@ -48,13 +47,31 @@ class Position {
 					];
 				}
 				// missing position
-				else { return null; }
+				else { 
+					Logger::warning(
+						'No location found for ['.$address.'] (API returned a response, but no location)', 
+						$response
+					);
+					return null; 
+				}
 			}
 			// api did not found succeed
-			else { return null; }
+			else { 
+				Logger::warning(
+					'No location found for ['.$address.'] (API returned an error)', 
+					$response['error_message']
+				);
+				return null; 
+			}
 		}
 		// the request failed
-		else { return null; }
+		else {
+			Logger::warning(
+				'No location found for ['.$address.'] (API didn\'t return a valid HTTP Response)', 
+				$response
+			);
+			return null; 
+		}
 	}
 
 	// return an address given a GPS position
@@ -65,19 +82,18 @@ class Position {
 	) :?array {
 		// new http request
 		$request = new \Polyfony\HttpRequest();
+		// assemble latlng
+		$latlng = $latitude . ',' . $longitude;
 		// configure the request
 		$request
 			->url(self::$_api_url)
-			->data('latlng', $latitude . ',' . $longitude);
-		// for each options
-		foreach($options as $key => $value) {
-			// add it to the request
-			$request->data($key, $value);
-		}
+			->data('latlng', $latlng);
+		// add it to the request
+		$request->data($options);
 		// actually execute the request
-		$success = $request->get();
+		$successful_request = $request->get();
 		// if the request succeeded
-		if($success) {
+		if($successful_request) {
 			// get the response
 			$response = $request->getBody();
 			// check if the api found results
@@ -92,13 +108,31 @@ class Position {
 					];
 				}
 				// missing position
-				else { return null; }
+				else { 
+					Logger::warning(
+						'No location found for ['.$latlng.'] (API returned a response, but no location)', 
+						$response
+					);
+					return null; 
+				}
 			}
 			// api did not found succeed
-			else { return null; }
+			else { 
+				Logger::warning(
+					'No location found for ['.$latlng.'] (API returned an error)', 
+					$response['error_message']
+				);
+				return null; 
+			}
 		}
 		// the request failed
-		else { return null; }
+		else {
+			Logger::warning(
+				'No location found for ['.$latlng.'] (API didn\'t return a valid HTTP Response)', 
+				$response
+			);
+			return null; 
+		}
 	}
 
 

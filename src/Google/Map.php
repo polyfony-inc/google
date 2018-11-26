@@ -23,11 +23,17 @@ class Map {
 	private $url;
 
 	// main constructor
-	public function __construct($type = 'roadmap', $size = 600, $zoom = 6 , $latitude = 46.8, $longitude = 1.7) {
+	public function __construct(
+		string $type = 'roadmap', 
+		int $size 	= 600, 
+		int $zoom 	= 6 , 
+		$latitude 	= 46.8, 
+		$longitude 	= 1.7
+	) {
 		// initialize
 		$this->url = self::$_api_url;
-		$this->options = array();
-		$this->markers = array();
+		$this->options = [];
+		$this->markers = [];
 		// set default
 		$this->zoom($zoom);
 		$this->size($size, $size);
@@ -36,19 +42,27 @@ class Map {
 	}
 
 	// set the desired size
-	public function size($width, $height) {
+	public function size($width, $height) :self {
 		// assign
 		$this->options['size'] = $width . 'x' . $height;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set the center position
-	public function center($latitude, $longitude) {
+	public function center($latitude, $longitude) :self {
 		// assign
 		$this->options['center'] = $latitude . ',' . $longitude;
 		// return self for chaining
-		return($this);
+		return $this;
+	}
+
+	// set the zoom level
+	public function zoom($zoom) :self {
+		// assign
+		$this->options['zoom'] = intval($zoom);
+		// return self for chaining
+		return $this;
 	}
 
 	// set a marker
@@ -59,43 +73,45 @@ class Map {
 		// assign
 		$this->markers[] = ($color ? $color . '|' : '') . ($label ? $label . '|' : '') . $latitude . ',' . $longitude;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set an option
-	public function option($key, $value) {
-		// assign
-		$this->options[$key] = $value;
+	public function option($key, $value=null) :self {
+		// if we are given an array of option
+		if(is_array($key)) {
+			// for each option
+			foreach($key as $index => $value) {
+				// set it individually
+				$this->option($index, $value);
+			}
+		}
+		else {
+			// assign
+			$this->options[$key] = $value;
+		}
 		// return self for chaining
-		return($this);
-	}
-
-	// set the zoom level
-	public function zoom($zoom) {
-		// assign
-		$this->options['zoom'] = intval($zoom);
-		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set the map type
-	public function type($type) {
+	public function type($type) :self {
 		// assign
 		$this->options['maptype'] = $type;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// set as retina
-	public function retina($enable=true) {
+	public function retina($enable=true) :self {
 		// assign
 		$this->options['scale'] = $enable ? 2 : 1;
 		// return self for chaining
-		return($this);
+		return $this;
 	}
 
 	// return the image url
-	public function url() {
+	public function url() :string{
 		// prepare the url
 		$url = $this->url . '?';
 
