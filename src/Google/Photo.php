@@ -12,6 +12,8 @@
 
 namespace Google;
 
+use \Polyfony\Config as Config;
+
 class Photo {
 	
 	// api url
@@ -31,7 +33,8 @@ class Photo {
 		$this->options = [
 			'size'	=>$size . 'x' . $size,
 			'fov'	=>$fov,
-			'pitch'	=>$pitch
+			'pitch'	=>$pitch,
+			'key'	=>Config::get('google', 'api_key')
 		];
 	}
 

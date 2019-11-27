@@ -11,7 +11,8 @@
     ],
     "require":{
         "php":">=7.1.0",
-        "polyfony-inc/polyfony": "*"
+        "polyfony-inc/polyfony": "*",
+        "php-curl-class/php-curl-class": "*"
     },
     "autoload": {
         "psr-4": {

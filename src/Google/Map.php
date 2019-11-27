@@ -12,6 +12,8 @@
 
 namespace Google;
 
+use \Polyfony\Config as Config;
+
 class Map {
 
 	// the map api url
@@ -32,7 +34,9 @@ class Map {
 	) {
 		// initialize
 		$this->url = self::$_api_url;
-		$this->options = [];
+		$this->options = [
+			'key'=>Config::get('google', 'api_key')
+		];
 		$this->markers = [];
 		// set default
 		$this->zoom($zoom);
