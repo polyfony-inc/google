@@ -43,8 +43,7 @@ class Cache {
 					self::generateLocalPath($remote_url)
 				);
 			// return the proxied url
-			//return self::getProxiedUrl($remote_url);
-				return self::generateUrl($remote_url);
+			return self::generateUrl($remote_url);
 		}
 
 	}
@@ -91,8 +90,6 @@ class Cache {
 			'../../'.self::STORAGE_PATH, 
 			'./'.trim(self::URL_PATH,'/')
 		);
-
-		//	symlink("../../../Private/Storage/Cache/Assets/{$asset_type}/", "./Assets/{$asset_type}/Cache");
 
 	}
 
