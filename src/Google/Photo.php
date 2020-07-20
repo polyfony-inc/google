@@ -1,9 +1,9 @@
 <?php
 /**
- * PHP Version 5
+ * PHP Version 7
  * Google Streetview image helper
  * @package Polyfony
- * @link https://github.com/SIB-FRANCE/Polyfony
+ * @link https://github.com/polyfony-inc/polyfony
  * @license http://www.gnu.org/licenses/lgpl.txt GNU General Public License
  * @note This program is distributed in the hope that it will be useful - WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -91,12 +91,19 @@ class Photo {
 		// prepare the url
 		$url = $this->url . '?';
 		// for each option
-		foreach($this->options as $key => $value) {
+		foreach(
+			$this->options as 
+			$key => $value
+		) {
 			// append it
-			$url .= urlencode($key) . '=' . urlencode($value) . '&';
+			$url .= 
+				urlencode($key) . '=' . 
+				urlencode($value) . '&';
 		}
 		// return the url
-		return trim($url,'&');
+		$url = trim($url,'&');
+		// use the local cache proxy 
+		return Cache::getProxiedUrl($url);
 	}
 
 	// magic conversion
