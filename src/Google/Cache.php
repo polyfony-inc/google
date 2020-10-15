@@ -14,7 +14,7 @@
 namespace Google;
 
 use \Polyfony\Config as Config;
-use \Polyfony\Keys as Keys;
+use \Polyfony\Hashs as Hashs;
 
 use Curl\Curl;
 
@@ -53,7 +53,7 @@ class Cache {
 	) :string {
 		return 
 			self::STORAGE_PATH . 
-			Keys::generate($remote_url);
+			($remote_url);
 	}
 
 	private static function generateUrl(
@@ -62,7 +62,7 @@ class Cache {
 
 		return 
 			self::URL_PATH . 
-			Keys::generate($remote_url);
+			Hashs::get($remote_url);
 
 	}
 
@@ -72,7 +72,7 @@ class Cache {
 
 		return file_exists(
 			self::STORAGE_PATH . 
-			Keys::generate($remote_url)
+			Hashs::get($remote_url)
 		);
 
 	}
