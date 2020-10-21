@@ -12,6 +12,7 @@
 namespace Google;
 use \Polyfony\Logger as Logger;
 use \Polyfony\Exception as Exception;
+use \Curl\Curl;
 
 class Position {
 	
@@ -24,19 +25,34 @@ class Position {
 		?array 	$options = []
 	) :?array {
 		// new http request
-		$request = new \Polyfony\HttpRequest();
-		// configure the request
-		$request->url(self::$_api_url)->data('address', $address);
-		// add it to the request
-		$request->data($options);
-		// execture the actual request
-		$successful_request = $request->get();
-		// if the request succeeded
-		if($successful_request) {
-			// get the response
-			$response = $request->getBody();
+		$request = new Curl;
+		// send the request
+		$request->get(
+			self::$_api_url, 
+			array_merge(
+				['address'=>$address],
+				$options
+			)
+		);
+		// if the request failed
+		if($request->error) {
+			// log the error
+			Logger::warning(
+				'No location found for ['.$address.'] (API didn\'t return a valid HTTP Response)', 
+				$request
+			);
+			// do not return a position
+			return null; 
+		}
+		else {
 			// check if the api found results
-			if($response['status'] == 'OK') {
+			if($request->getHttpStatusCode() == 200) {
+				// cast the response to array
+				$response = json_decode(
+					json_encode(
+						$request->getResponse()
+					), true
+				);
 				// if gps coordinates are available
 				if(isset($response['results'][0]['geometry']['location'])) {
 					// return formatted address and position
@@ -59,19 +75,13 @@ class Position {
 			else { 
 				Logger::warning(
 					'No location found for ['.$address.'] (API returned an error)', 
-					$response['error_message']
+					$request->getErrorMessage()
 				);
 				return null; 
 			}
+
 		}
-		// the request failed
-		else {
-			Logger::warning(
-				'No location found for ['.$address.'] (API didn\'t return a valid HTTP Response)', 
-				$response
-			);
-			return null; 
-		}
+
 	}
 
 	// return an address given a GPS position
@@ -81,23 +91,36 @@ class Position {
 		?array $options = []
 	) :?array {
 		// new http request
-		$request = new \Polyfony\HttpRequest();
-		// assemble latlng
-		$latlng = $latitude . ',' . $longitude;
-		// configure the request
-		$request
-			->url(self::$_api_url)
-			->data('latlng', $latlng);
-		// add it to the request
-		$request->data($options);
-		// actually execute the request
-		$successful_request = $request->get();
-		// if the request succeeded
-		if($successful_request) {
-			// get the response
-			$response = $request->getBody();
+		$request = new Curl;
+		// send the request
+		$request->get(
+			self::$_api_url, 
+			array_merge(
+				['latlng'=>$latitude . ',' . $longitude],
+				$options
+			)
+		);
+
+		// if the request failed
+		if($request->error) {
+			// log the error
+			Logger::warning(
+				'No location found for ['.json_encode([$latitude,$longitude]).'] (API didn\'t return a valid HTTP Response)', 
+				$request
+			);
+			// do not return a position
+			return null; 
+		}
+		else {
 			// check if the api found results
-			if($response['status'] == 'OK') {
+			if($request->getHttpStatusCode() == 200) {
+				// cast the response to array
+				$response = json_decode(
+					json_encode(
+						$request->getResponse()
+					), true
+				);
+				
 				// if gps coordinates are available
 				if(isset($response['results'][0]['geometry']['location'])) {
 					// return formatted address and position
@@ -110,29 +133,25 @@ class Position {
 				// missing position
 				else { 
 					Logger::warning(
-						'No location found for ['.$latlng.'] (API returned a response, but no location)', 
+						'No location found for ['.json_encode([$latitude,$longitude]).'] (API returned a response, but no location)', 
 						$response
 					);
 					return null; 
 				}
+
+
 			}
-			// api did not found succeed
+			// api did encountered an error
 			else { 
 				Logger::warning(
-					'No location found for ['.$latlng.'] (API returned an error)', 
-					$response['error_message']
+					'No location found for ['.json_encode([$latitude,$longitude]).'] (API returned an error)', 
+					$request->getErrorMessage()
 				);
 				return null; 
 			}
+
 		}
-		// the request failed
-		else {
-			Logger::warning(
-				'No location found for ['.$latlng.'] (API didn\'t return a valid HTTP Response)', 
-				$response
-			);
-			return null; 
-		}
+
 	}
 
 

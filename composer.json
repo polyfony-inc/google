@@ -10,7 +10,7 @@
         }
     ],
     "require":{
-        "php":">=7.1.0",
+        "php":">=7.2.0",
         "polyfony-inc/polyfony": "*",
         "php-curl-class/php-curl-class": "*"
     },

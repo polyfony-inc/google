@@ -14,9 +14,7 @@
 namespace Google;
 
 use \Polyfony\Config as Config;
-use \Polyfony\Hashs as Hashs;
-
-use Curl\Curl;
+use \Curl\Curl;
 
 class Cache {
 
@@ -40,7 +38,7 @@ class Cache {
 			(new Curl)
 				->download(
 					$remote_url, 
-					self::generateLocalPath($remote_url)
+					self::getLocalPath($remote_url)
 				);
 			// return the proxied url
 			return self::generateUrl($remote_url);
@@ -48,12 +46,24 @@ class Cache {
 
 	}
 
-	private static function generateLocalPath(
+	private static function getLocalPath(
 		string $remote_url
 	) :string {
 		return 
 			self::STORAGE_PATH . 
-			($remote_url);
+			self::getHash($remote_url);
+	}
+
+	private static function getHash(
+		string $remote_url
+	) :string {
+		return hash(
+			'sha512',
+			json_encode([
+				'polyfony-inc/google',
+				$remote_url
+			])
+		);
 	}
 
 	private static function generateUrl(
@@ -62,7 +72,7 @@ class Cache {
 
 		return 
 			self::URL_PATH . 
-			Hashs::get($remote_url);
+			self::getHash($remote_url);
 
 	}
 
@@ -71,8 +81,7 @@ class Cache {
 	) :bool {
 
 		return file_exists(
-			self::STORAGE_PATH . 
-			Hashs::get($remote_url)
+			self::getLocalPath($remote_url)
 		);
 
 	}
