@@ -31,10 +31,10 @@ class Position {
 		$request->data($options);
 		// execture the actual request
 		$successful_request = $request->get();
+		// get the response
+		$response = $request->getBody();
 		// if the request succeeded
 		if($successful_request) {
-			// get the response
-			$response = $request->getBody();
 			// check if the api found results
 			if($response['status'] == 'OK') {
 				// if gps coordinates are available
